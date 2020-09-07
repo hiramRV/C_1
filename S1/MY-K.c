@@ -7,12 +7,13 @@
 
 int main(void)
 {
-	/*Declaracion con Inializacion*/
-	int millas = 26, yardas = 385;
-	/*Declatacion sin Inializacion*/
+	
+	int millas, yardas;
 	double km;
+	printf("Ingrese las millas y yardas como enteros: ");
+	scanf("%d%d",&millas,&yardas);
 	
 	km = 1.609 * (millas + yardas/1760.0);
-	printf("\n Una maraton son %lf km.\n",km);
+	printf("\n%d Millas y %d Yardas son %lf km.\n",millas, yardas,km);
 	return 0;
 }

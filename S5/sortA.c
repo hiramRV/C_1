@@ -48,7 +48,5 @@ int main(void){
 	printf("\n\nNotas Ordenadas: ");
 	print_array(NUM,notas);
 	return 0;
-	
-	
-	
+		
 }

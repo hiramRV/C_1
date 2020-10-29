@@ -1,6 +1,6 @@
 /*  ADT list
 	Steven Rubio
-	25/10/2020
+	27/10/2020
 */
 
 #include<stdio.h>

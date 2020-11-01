@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-//Typdef card
+/*Typdef card*/
 typedef struct card{ int suit; short pips;} card;
 
-//Creation of a card, given the values
+/*Creation of a card, given the values*/
 card create_card(int s, short p){
 	card card1;
 	card1.suit = s%13 +1;	//We ensure values from 1 to 13
@@ -18,13 +18,13 @@ card create_card(int s, short p){
 }
 
 //Print card values
-card print_card(card c){
+void print_card(card c){
 	printf("(%d, %d) \n",c.suit, c.pips);
 	
 }
 
 //Deck creation
-card* create_deck(card *deck){
+void create_deck(card *deck){
 	int i,j,counter = 0;	//Index and counter for the number of cards
 	for(i=0;i<=3;i++){
 		for(j=0;j<=12;j++){
@@ -49,7 +49,7 @@ void swap(card *a, card *b){
 //Fuction to shuffle deck
 void shuffle(card *deck){
 	int i = 0;
-	while(i<=100){	//I do 100 swaps. 
+	while(i<=500){	//I do 500 swaps. 
 		int i1 = rand() % 52;
 		int i2 = rand() % 52;
 		if(i1!=i2)
@@ -59,7 +59,7 @@ void shuffle(card *deck){
 }
 
 //Create a hand for a player
-card* create_hand(card *hand, card *deck, int print){
+void create_hand(card *hand, card *deck, int print){
 	//Print its a flag tho print specific thigs for debbuging 
 	int r_val;		//Int to store the random value
 	int i = 0;		//Index for the card in the hand
@@ -103,13 +103,149 @@ card* create_hand(card *hand, card *deck, int print){
 			}
 		}
 }
+
+//Basic int SWAP 
+void swapInt(int *a, int *b){
+	
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+//Bubble A. for Sorting
+void bubble(int data[], int NUM){
+	
+	int i,j;
+	for(i=0;i<NUM;i++){
+		for(j = NUM-1;j>i;j--)
+			if(data[j-1]>data[j])
+				swapInt(&data[j-1],&data[j]);
+	}
+}
+
+//Function to check 4OAK, FullHouse,3OAK, 2P, 1P and NP
+int check_hand(card *hand, int print){
+	//Print its a flag tho print specific thigs for debbuging 
+	int i;
+	int d[7] = {0};	//Array of stored cards values
+	//Fist, i store only the values
+	for(i=0;i<7;i++)
+		d[i]=hand[i].suit;
+	
+	//Sorting the array
+	bubble(d,7);
+	
+	//Check for different elemnts. 
+	int value = 0;	//This value ints modified for each case!
+						//Going from 0 to 5
+	for(i=0;i<7;i++){
+		//4OAK
+		if(d[i]==d[i+1] && d[i]==d[i+2] && d[i]==d[i+3] && value==0){
+			if(print) printf("\nFour of a Kind!");
+			value = 5;
+		}
+		//3OAK and Full House
+		//verify 3 equal and 1 not equal value
+		if(d[i]==d[i+1] && d[i]==d[i+2]&& d[i]!=d[i+3] && d[i]!=d[i-1]){
+			if(value == 1 || value == 2){
+				//FullHouse
+				if(print) printf("\nFull House");
+				value = 4;}
+				
+			else{
+				//3OAK
+				if(print) printf("\nThree of a Kind!");
+				value = 3;}
+		}
+		//FullHouse, 2P, 1P
+		//Verify 2 equal and 2 not equal values, the next and the previous
+		if(d[i]==d[i+1] && d[i]!=d[i+2] && d[i]!=d[i-1]){
+			//FullHouse
+			if(value == 3){
+				if(print) printf("\nFull House");
+				value = 4;}
+				
+			//3 pairs, just for fun :)
+			if(value == 2)
+				if(print) printf("\nMultiple Pair");
+			//2P
+			if(value == 1){
+				if(print)printf("\nTwo Pair");
+				value = 2;}
+			//1P
+			if(value == 0){
+				if(print) printf("\nA Pair");
+				value = 1;
+			}
+
+		}
+	}
+	//NP
+	if(value == 0)
+		if(print) printf("\n No Pair");
+	if(print){
+		printf("\n\n");
+		printf("Sorted values of the cards: \n");
+		for(i=0;i<7;i++)
+			printf("%d ",d[i]);
+	}
+	return value;
+}
+
+//A print_case
+void print_hand_case(int value){
+	switch(value){
+	case 0:	printf("\nNo Pair");			break;	
+	case 1:	printf("\nA Pair");				break;	
+	case 2:	printf("\nTwo Pair");			break;	
+	case 3:	printf("\nThree of a Kind");	break;
+	case 4:	printf("\nFull House");			break;
+	case 5:	printf("\nFour of a Kind");		break;
+	default:	printf("%d its an error",value);
+	}
+}
+
 //Function to print your hand
 void print_hand(card *hand){
 	for(int i =0;i<=6;i++)
 		print_card(hand[i]);
 }
+
+//Function to evaluate 1,0000,000 hands
+void million_hands(card *deck, int NUM){
+	int NP = 0;
+	int P1 = 0;
+	int P2 = 0;
+	int TOAK  = 0;
+	int FullH = 0;
+	int FOAK  = 0;
+	int i = 0;
+	int value;
+	//Create the hand and check it. 
+	for(i = 0;i<NUM;i++){
+		card hand[7];
+		create_hand(hand, deck, 0);
+		value = check_hand(hand,0);
+		if(value==0) NP++;
+		if(value==1) P1++;
+		if(value==2) P2++;
+		if(value==3) TOAK++;
+		if(value==4) FullH++;
+		if(value==5) FOAK++;
+	}
+	//Print results
+	printf("%d No Pairs: %f, real: 0.174119\n\n"	,NP, (NP/(NUM+0.0)));
+	printf("%d Pairs: %f, real: 0.438225\n\n"		,P1, (P1/(NUM+0.0)));
+	printf("%d Two Pairs: %f, real: 0.234955\n\n"	,P2, (P2/(NUM+0.0)));
+	printf("%d Three of a Kind: %f, real: 0.048298\n\n",TOAK,  (TOAK/(NUM+0.0)));
+	printf("%d Full House: %f, real: 0.025961\n\n"	,FullH, (FullH/(NUM+0.0)));
+	printf("%d Four of a Kind: %f, real: 0.001680\n\n",FOAK,  (FOAK/(NUM+0.0)));
+	printf("Total: \t%f ",((NP+P1+P2+TOAK+FullH+FOAK)/(NUM+0.0)));
+}
+
+
 int main(){
-	
+	//Some Print to show functionality
 	srand(time(NULL)); //Seed
 	//Deck
 	card deck[52]; 
@@ -127,11 +263,18 @@ int main(){
 	print_card(deck[51]);
 	printf("\n\n");
 	
-	//Hand
+	//Test Hand
 	card hand[7];
 	create_hand(hand, deck, 0);
 	printf("Your hand: \n");
 	print_hand(hand);
+	//Check hand 
+	int value;
+	value = check_hand(hand,0);
+	print_hand_case(value);
 	
+	//The million hand
+	printf("\n\n***The million hands Results****\n\n");
+	million_hands(deck,1000000);
 	return 0;
 }

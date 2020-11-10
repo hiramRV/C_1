@@ -1,0 +1,5 @@
+The length of the array is: 4
+Array values: 
+9	11	12	15	
+Average: 11.750000
+Max: 15

@@ -6,7 +6,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<ctype.h>
-#include <assert.h>
+#include<assert.h>
 
 //Definicion del tipo abstracto lista
 typedef struct list{ int data; struct list *next;} list;
